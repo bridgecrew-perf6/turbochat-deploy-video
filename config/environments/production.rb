@@ -1,4 +1,4 @@
-require "active_support/core_ext/integer/time"
+require 'active_support/core_ext/integer/time'
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -8,6 +8,19 @@ Rails.application.configure do
 
   config.active_storage.service = :amazon
   config.active_storage.variant_processor = :mini_magick
+
+  # If a default host is specifically defined then it's used otherwise the app is
+  # assumed to be a Heroku review app. Note that `Hash#fetch` is used defensively
+  # so the app will blow up at boot-time if both `DEFAULT_URL_HOST` and
+  # `HEROKU_APP_NAME` aren't defined.
+
+  host = ENV['DEFAULT_URL_HOST'] || "#{ENV['HEROKU_APP_NAME']}.herokuapp.com"
+  protocol = config.force_ssl ? 'https' : 'http'
+
+  config.action_controller.default_url_options = {
+    host: host,
+    protocol: protocol
+  }
 
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both threaded web servers
@@ -19,21 +32,13 @@ Rails.application.configure do
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
 
-  host = ENV['DEFAULT_URL_HOST'] || "#{ENV['HEROKU_APP_NAME']}.herokuapp.com"
-  protocol = config.config_ssl ? 'https' : 'http'
-
-  config.action_controller.default_url_option = {
-    host: host,
-    protocol: protocol
-  }
-
   # Ensures that a master key has been made available in either ENV["RAILS_MASTER_KEY"]
   # or in config/master.key. This key is used to decrypt credentials (and other encrypted files).
   # config.require_master_key = true
 
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
-  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
+  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
   # Compress CSS using a preprocessor.
   # config.assets.css_compressor = :sass
@@ -49,7 +54,7 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # config.active_storage.service = :local
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
@@ -64,7 +69,7 @@ Rails.application.configure do
   config.log_level = :info
 
   # Prepend all log lines with the following tags.
-  config.log_tags = [ :request_id ]
+  config.log_tags = [:request_id]
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
@@ -93,7 +98,7 @@ Rails.application.configure do
   # require "syslog/logger"
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new "app-name")
 
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
+  if ENV['RAILS_LOG_TO_STDOUT'].present?
     logger           = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
