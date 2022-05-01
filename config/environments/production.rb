@@ -20,7 +20,7 @@ Rails.application.configure do
   config.action_controller.perform_caching = true
 
   host = ENV['DEFAULT_URL_HOST'] || "#{ENV['HEROKU_APP_NAME']}.herokuapp.com"
-  protcol = Rails.config_ssl ? 'https' : 'http'
+  protocol = Rails.config_ssl ? 'https' : 'http'
 
   config.action_controller.default_url_option = {
     host: host,
